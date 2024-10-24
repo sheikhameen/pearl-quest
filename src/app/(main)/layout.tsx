@@ -5,7 +5,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="bg-gradient-to-br from-purple-200 to-indigo-200 min-h-screen">
       <AppBar />
-      {children}
+      <div className="p-4">{children}</div>
       <Navbar />
     </div>
   );
