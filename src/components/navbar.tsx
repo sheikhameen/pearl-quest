@@ -17,8 +17,8 @@ const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 w-full p-2">
-      <div className="container mx-auto bg-white shadow-2xl rounded-full py-4 px-8 flex justify-between">
+    <div className="fixed bottom-0 p-2 w-full md:p-4">
+      <div className="container mx-auto bg-white shadow-2xl rounded-full py-4 px-8 flex justify-between md:w-max md:gap-2">
         {routes.map((route) => (
           <Link
             key={route.href}
