@@ -14,9 +14,10 @@ datasource db {
 }
 
 model Set {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  questions Question[]
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  questions   Question[]
 }
 
 model Question {

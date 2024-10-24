@@ -18,7 +18,7 @@ const Page = async () => {
       </div>
 
       {sets.map((set: Set) => (
-        <SetCard key={set.id} title={set.title} />
+        <SetCard key={set.id} set={set} />
       ))}
     </div>
   );

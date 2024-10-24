@@ -1,19 +1,22 @@
-import { Button } from "./ui/button";
-import { Card, CardContent, CardTitle } from "./ui/card";
+import Link from "next/link";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Set } from "@prisma/client";
 
 interface SetCardProps {
-  title: string;
+  set: Set;
 }
-const SetCard = ({ title }: SetCardProps) => {
+const SetCard = ({ set }: SetCardProps) => {
   return (
-    <Card className="border-none bg-gradient-to-r from-indigo-500 to-indigo-700 text-primary-foreground rounded-2xl shadow-xl hover:scale-95 transition-transform">
-      <CardContent className="p-6 flex justify-between items-center">
-        <CardTitle className="text-3xl">{title}</CardTitle>
-        <Button size="lg" className="bg-primary/70">
-          Start
-        </Button>
-      </CardContent>
-    </Card>
+    <Link href={`/sets/${set.id}`} className="block">
+      <Card className="border-none bg-gradient-to-r from-indigo-500 to-indigo-700 text-primary-foreground rounded-2xl shadow-xl hover:scale-95 transition-transform">
+        <CardHeader>
+          <CardTitle>{set.title}</CardTitle>
+          <CardDescription className="text-muted/80">
+            {set.description}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    </Link>
   );
 };
 
