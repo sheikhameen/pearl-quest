@@ -7,7 +7,7 @@ interface SetCardProps {
 }
 const SetCard = ({ title, questionsCount }: SetCardProps) => {
   return (
-    <Card className="border-none bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-primary-foreground rounded-2xl shadow-xl hover:scale-105 transition-transform">
+    <Card className="border-none bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-primary-foreground rounded-2xl shadow-xl hover:scale-95 transition-transform">
       <CardHeader className="pb-0">
         <CardTitle className="text-3xl">{title}</CardTitle>
       </CardHeader>
