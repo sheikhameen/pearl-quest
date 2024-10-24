@@ -13,15 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Set {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  questions Question[]
+}
+
 model Question {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   title      String
-  answers    String[]
+  answers    Answer[]
   difficulty Difficulty @default(EASY)
+
+  set   Set    @relation(fields: [setId], references: [id])
+  setId String @db.ObjectId
 }
 
 enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+model Answer {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  text      String
+  isCorrect Boolean
+
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String   @db.ObjectId
 }
