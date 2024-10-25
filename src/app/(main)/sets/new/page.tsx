@@ -208,7 +208,11 @@ const Page = () => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="Set description here..." {...field} />
+                    <Textarea
+                      placeholder="Set description here..."
+                      className="resize-none"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
