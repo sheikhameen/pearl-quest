@@ -28,7 +28,7 @@ const Navbar = () => {
                 size: "icon",
                 variant: pathname === route.href ? "default" : "secondary",
               }),
-              "rounded-full"
+              "rounded-full [&_svg]:size-6 p-6"
             )}
           >
             {route.icon}
