@@ -54,11 +54,13 @@ const formSchema = z.object({
 const Page = () => {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [newQuestionText, setNewQuestionText] = useState("");
-  const [newQuestionAnswer1] = useState("");
-  const [newQuestionAnswer2] = useState("");
-  const [newQuestionAnswer3] = useState("");
-  const [newQuestionAnswer4] = useState("");
-  const [newQuestionDifficulty] = useState<$Enums.Difficulty>("EASY");
+  const [newQuestionAnswer1, setNewQuestionAnswer1] = useState("");
+  const [newQuestionAnswer2, setNewQuestionAnswer2] = useState("");
+  const [newQuestionAnswer3, setNewQuestionAnswer3] = useState("");
+  const [newQuestionAnswer4, setNewQuestionAnswer4] = useState("");
+  const [newQuestionDifficulty, setNewQuestionDifficulty] =
+    useState<$Enums.Difficulty>("EASY");
+  const difficulties: $Enums.Difficulty[] = ["EASY", "MEDIUM", "HARD"];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -142,63 +144,112 @@ const Page = () => {
                 </FormItem>
               )}
             />
-            <div className="space-y-2">
-              <div className="text-destructive font-bold">TO-DO</div>
+            <Card className="py-2 px-3 bg-muted space-y-1">
+              <Label>Added Questions</Label>
+              {questions.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Add questions below. Added questions appear here.
+                </p>
+              )}
               {questions.map((question) => (
-                <Card key={question.id}>
-                  <CardHeader>
-                    <CardTitle className="text-xl">
-                      <span className="text-muted-foreground/50">
-                        {parseInt(question.id) + 1}.
-                      </span>{" "}
-                      {question.text}
-                    </CardTitle>
-                  </CardHeader>
+                <Card key={question.id} className="py-2 px-3">
+                  <CardTitle className="text-lg">
+                    <span className="text-muted-foreground/50">
+                      {parseInt(question.id) + 1}.
+                    </span>{" "}
+                    {question.text}
+                  </CardTitle>
                 </Card>
               ))}
-            </div>
-            <div className="space-y-2">
-              <div className="text-destructive font-bold">TO-DO</div>
+            </Card>
+            <Card className="space-y-4 py-2 px-3 bg-muted">
+              <Label>Add a new question</Label>
               <Textarea
                 className="resize-none"
+                placeholder="Your question here..."
                 value={newQuestionText}
                 onChange={({ target }) => setNewQuestionText(target.value)}
               />
-              <RadioGroup defaultValue="option-one">
+              <RadioGroup defaultValue="answer-1" className="gap-1">
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option-one" id="option-one" />
-                  <Label htmlFor="option-one" className="w-full">
-                    <Input placeholder="Answer #1" />
+                  <RadioGroupItem value="answer-1" id="answer-1" />
+                  <Label htmlFor="answer-1" className="w-full">
+                    <Input
+                      placeholder="Answer #1"
+                      value={newQuestionAnswer1}
+                      onChange={({ target }) =>
+                        setNewQuestionAnswer1(target.value)
+                      }
+                    />
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option-two" id="option-two" />
-                  <Label htmlFor="option-two" className="w-full">
-                    <Input placeholder="Answer #2" />
+                  <RadioGroupItem value="answer-2" id="answer-2" />
+                  <Label htmlFor="answer-2" className="w-full">
+                    <Input
+                      placeholder="Answer #2"
+                      value={newQuestionAnswer2}
+                      onChange={({ target }) =>
+                        setNewQuestionAnswer2(target.value)
+                      }
+                    />
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option-three" id="option-three" />
-                  <Label htmlFor="option-three" className="w-full">
-                    <Input placeholder="Answer #3" />
+                  <RadioGroupItem value="answer-3" id="answer-3" />
+                  <Label htmlFor="answer-3" className="w-full">
+                    <Input
+                      placeholder="Answer #3"
+                      value={newQuestionAnswer3}
+                      onChange={({ target }) =>
+                        setNewQuestionAnswer3(target.value)
+                      }
+                    />
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option-four" id="option-four" />
-                  <Label htmlFor="option-four" className="w-full">
-                    <Input placeholder="Answer #4" />
+                  <RadioGroupItem value="answer-4" id="answer-4" />
+                  <Label htmlFor="answer-4" className="w-full">
+                    <Input
+                      placeholder="Answer #4"
+                      value={newQuestionAnswer4}
+                      onChange={({ target }) =>
+                        setNewQuestionAnswer4(target.value)
+                      }
+                    />
                   </Label>
                 </div>
               </RadioGroup>
+
+              <RadioGroup
+                value={newQuestionDifficulty}
+                onValueChange={(value: $Enums.Difficulty) => {
+                  setNewQuestionDifficulty(value);
+                }}
+              >
+                <Label>Difficulty:</Label>
+                <div className="flex gap-2 justify-between">
+                  {difficulties.map((difficulty) => (
+                    <div
+                      key={difficulty}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem value={difficulty} id={difficulty} />
+                      <Label htmlFor={difficulty}>{difficulty}</Label>
+                    </div>
+                  ))}
+                </div>
+              </RadioGroup>
+
               <Button
                 type="button"
-                variant="secondary"
+                variant="outline"
                 className="w-full"
                 onClick={handleAddNewQuestion}
               >
                 <PlusCircle /> Add new question
               </Button>
-            </div>
+            </Card>
             <Button type="submit">Submit</Button>
           </form>
         </Form>
