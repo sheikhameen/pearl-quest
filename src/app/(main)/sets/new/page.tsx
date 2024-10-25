@@ -17,7 +17,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
@@ -144,16 +150,16 @@ const Page = () => {
                 </FormItem>
               )}
             />
-            <Card className="py-2 px-3 bg-muted space-y-1">
+            <Card className="p-3 pt-2 bg-muted space-y-1">
               <Label>Added Questions</Label>
               {questions.length === 0 && (
-                <p className="text-xs text-muted-foreground">
+                <CardDescription className="text-xs">
                   Add questions below. Added questions appear here.
-                </p>
+                </CardDescription>
               )}
               {questions.map((question) => (
-                <Card key={question.id} className="py-2 px-3">
-                  <CardTitle className="text-lg">
+                <Card key={question.id} className="py-2 px-3 shadow-none">
+                  <CardTitle className="text-lg leading-tight">
                     <span className="text-muted-foreground/50">
                       {parseInt(question.id) + 1}.
                     </span>{" "}
@@ -162,7 +168,7 @@ const Page = () => {
                 </Card>
               ))}
             </Card>
-            <Card className="space-y-4 py-2 px-3 bg-muted">
+            <Card className="space-y-4 p-3 pt-2 bg-muted">
               <Label>Add a new question</Label>
               <Textarea
                 className="resize-none"
