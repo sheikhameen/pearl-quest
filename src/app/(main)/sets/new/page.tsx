@@ -1,6 +1,6 @@
 "use client";
 
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -28,12 +28,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { $Enums, Prisma } from "@prisma/client";
+import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 type QuestionWithAnswers = Prisma.QuestionGetPayload<{
   include: {
     answers: {
       select: {
         text: true;
+        isCorrect: true;
       };
     };
   };
@@ -41,6 +44,25 @@ type QuestionWithAnswers = Prisma.QuestionGetPayload<{
     setId: true;
   };
 }>;
+
+const answerSchema = z.object({
+  text: z
+    .string()
+    .min(1, "Answer cannot be empty.")
+    .max(32, "Answer cannot be longer than 32 characters"),
+  isCorrect: z.boolean(),
+});
+const questionSchema = z.object({
+  id: z.string(),
+  text: z
+    .string()
+    .min(1, "Question cannot be empty.")
+    .max(128, "Question cannot be longer than 128 characters"),
+  answers: answerSchema.array(),
+  difficulty: z.enum(["EASY", "MEDIUM", "HARD"], {
+    message: "Invalid value. Allowed values: EASY / MEDIUM / HARD",
+  }),
+});
 
 const formSchema = z.object({
   key: z
@@ -57,6 +79,8 @@ const formSchema = z.object({
     .max(256, "Description must have at most 256 characters"),
 });
 
+type AnswersMCQType = "answer-1" | "answer-2" | "answer-3" | "answer-4";
+
 const Page = () => {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [newQuestionText, setNewQuestionText] = useState("");
@@ -64,6 +88,8 @@ const Page = () => {
   const [newQuestionAnswer2, setNewQuestionAnswer2] = useState("");
   const [newQuestionAnswer3, setNewQuestionAnswer3] = useState("");
   const [newQuestionAnswer4, setNewQuestionAnswer4] = useState("");
+  const [newQuestionCorrectAnswer, setNewQuestionCorrectAnswer] =
+    useState<AnswersMCQType>("answer-1");
   const [newQuestionDifficulty, setNewQuestionDifficulty] =
     useState<$Enums.Difficulty>("EASY");
   const difficulties: $Enums.Difficulty[] = ["EASY", "MEDIUM", "HARD"];
@@ -83,21 +109,59 @@ const Page = () => {
     console.log(values);
   }
 
-  const handleAddNewQuestion = () => {
-    setQuestions([
-      ...questions,
-      {
+  const resetNewQuestionForm = () => {
+    setNewQuestionText("");
+    setNewQuestionAnswer1("");
+    setNewQuestionAnswer2("");
+    setNewQuestionAnswer3("");
+    setNewQuestionAnswer4("");
+    setNewQuestionCorrectAnswer("answer-1");
+    setNewQuestionDifficulty("EASY");
+  };
+
+  const handleAddNewQuestion = async () => {
+    const existingQuestion = questions.find((q) => q.text === newQuestionText);
+
+    if (existingQuestion) {
+      toast.error("You cannot have the same question again.");
+      return;
+    }
+
+    try {
+      const question = {
         id: questions.length.toString(),
         text: newQuestionText,
         difficulty: newQuestionDifficulty,
         answers: [
-          { text: newQuestionAnswer1 },
-          { text: newQuestionAnswer2 },
-          { text: newQuestionAnswer3 },
-          { text: newQuestionAnswer4 },
+          {
+            text: newQuestionAnswer1,
+            isCorrect: newQuestionCorrectAnswer === "answer-1",
+          },
+          {
+            text: newQuestionAnswer2,
+            isCorrect: newQuestionCorrectAnswer === "answer-2",
+          },
+          {
+            text: newQuestionAnswer3,
+            isCorrect: newQuestionCorrectAnswer === "answer-3",
+          },
+          {
+            text: newQuestionAnswer4,
+            isCorrect: newQuestionCorrectAnswer === "answer-4",
+          },
         ],
-      },
-    ]);
+      };
+
+      const parsedQuestion = await questionSchema.parseAsync(question);
+
+      setQuestions([...questions, parsedQuestion]);
+
+      resetNewQuestionForm();
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        toast.error(error.issues[0].message);
+      }
+    }
   };
 
   return (
@@ -159,12 +223,25 @@ const Page = () => {
               )}
               {questions.map((question) => (
                 <Card key={question.id} className="py-2 px-3 shadow-none">
-                  <CardTitle className="text-lg leading-tight">
-                    <span className="text-muted-foreground/50">
+                  <CardTitle className="text-md leading-tight">
+                    <span className="text-muted-foreground/50 mr-1.5">
                       {parseInt(question.id) + 1}.
-                    </span>{" "}
+                    </span>
                     {question.text}
                   </CardTitle>
+                  <CardContent className="p-0 pt-2 text-xs font-semibold grid grid-cols-2 gap-1">
+                    {question.answers.map((answer, index) => (
+                      <div
+                        key={index}
+                        className={cn(
+                          "border rounded-lg py-1 px-3",
+                          answer.isCorrect && "bg-green-300"
+                        )}
+                      >
+                        {answer.text}
+                      </div>
+                    ))}
+                  </CardContent>
                 </Card>
               ))}
             </Card>
@@ -176,7 +253,13 @@ const Page = () => {
                 value={newQuestionText}
                 onChange={({ target }) => setNewQuestionText(target.value)}
               />
-              <RadioGroup defaultValue="answer-1" className="gap-1">
+              <RadioGroup
+                className="gap-1"
+                value={newQuestionCorrectAnswer}
+                onValueChange={(value: AnswersMCQType) =>
+                  setNewQuestionCorrectAnswer(value)
+                }
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="answer-1" id="answer-1" />
                   <Label htmlFor="answer-1" className="w-full">
