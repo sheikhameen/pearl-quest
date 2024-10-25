@@ -227,7 +227,7 @@ const Page = () => {
               )}
               {questions.map((question) => (
                 <Card key={question.id} className="py-2 px-3 shadow-none">
-                  <CardHeader className="p-0 space-y-0 flex-row items-center justify-between">
+                  <CardHeader className="p-0 space-y-0 flex-row items-start justify-between">
                     <CardTitle className="text-md leading-tight">
                       <span className="text-muted-foreground/50 mr-1.5">
                         {parseInt(question.id) + 1}.
