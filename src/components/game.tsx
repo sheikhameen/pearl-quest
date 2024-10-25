@@ -10,6 +10,7 @@ import {
 } from "./ui/card";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
+import toast from "react-hot-toast";
 
 type SetWithQuestionAndAnswers = Prisma.SetGetPayload<{
   include: { questions: { include: { answers: true } } };
@@ -41,6 +42,7 @@ const Game = ({ set }: GameProps) => {
 
   const handleAnswer = (answer: Answer) => {
     if (answer.isCorrect) {
+      toast.success("Correct!");
       const points =
         currentQuestion.difficulty === "EASY"
           ? 1
@@ -48,6 +50,8 @@ const Game = ({ set }: GameProps) => {
           ? 2
           : 3;
       setScore((prevScore) => prevScore + points);
+    } else {
+      toast.error("Wrong!");
     }
     handleNextQuestion();
   };
