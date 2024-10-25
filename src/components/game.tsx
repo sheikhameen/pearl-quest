@@ -19,6 +19,12 @@ interface GameProps {
   set: SetWithQuestionAndAnswers;
 }
 
+const timeouts = {
+  EASY: 10,
+  MEDIUM: 20,
+  HARD: 30,
+} as const;
+
 const Game = ({ set }: GameProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -27,7 +33,7 @@ const Game = ({ set }: GameProps) => {
 
   const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex < set.questions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setGameOver(true);
     }
@@ -50,15 +56,13 @@ const Game = ({ set }: GameProps) => {
 
   useEffect(() => {
     if (gameOver) return;
-
     const difficulty = currentQuestion.difficulty;
-    const duration =
-      difficulty === "EASY" ? 10 : difficulty === "MEDIUM" ? 20 : 30;
+    const duration = timeouts[difficulty];
     setTimeLeft(duration);
 
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
+        if (prevTime <= 0) {
           clearInterval(timer);
           handleNextQuestion();
           return 0;
@@ -68,12 +72,7 @@ const Game = ({ set }: GameProps) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [
-    currentQuestionIndex,
-    gameOver,
-    currentQuestion.difficulty,
-    handleNextQuestion,
-  ]);
+  }, [currentQuestionIndex, gameOver, currentQuestion, handleNextQuestion]);
 
   if (gameOver) {
     return (
@@ -98,15 +97,7 @@ const Game = ({ set }: GameProps) => {
       </CardHeader>
       <CardContent>
         <Progress
-          value={
-            (timeLeft /
-              (currentQuestion.difficulty === "EASY"
-                ? 10
-                : currentQuestion.difficulty === "MEDIUM"
-                ? 20
-                : 30)) *
-            100
-          }
+          value={(timeLeft / timeouts[currentQuestion.difficulty]) * 100}
           className="mb-4"
         />
         <p className="mb-4 text-lg font-medium">{currentQuestion.text}</p>
