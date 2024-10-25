@@ -227,12 +227,26 @@ const Page = () => {
               )}
               {questions.map((question) => (
                 <Card key={question.id} className="py-2 px-3 shadow-none">
-                  <CardTitle className="text-md leading-tight">
-                    <span className="text-muted-foreground/50 mr-1.5">
-                      {parseInt(question.id) + 1}.
-                    </span>
-                    {question.text}
-                  </CardTitle>
+                  <CardHeader className="p-0 space-y-0 flex-row items-center justify-between">
+                    <CardTitle className="text-md leading-tight">
+                      <span className="text-muted-foreground/50 mr-1.5">
+                        {parseInt(question.id) + 1}.
+                      </span>
+                      {question.text}
+                    </CardTitle>
+                    <div
+                      className={cn(
+                        "text-xs font-semibold text-white px-1 rounded",
+                        question.difficulty === "EASY"
+                          ? "bg-green-600"
+                          : question.difficulty === "MEDIUM"
+                          ? "bg-yellow-500"
+                          : "bg-destructive"
+                      )}
+                    >
+                      {question.difficulty}
+                    </div>
+                  </CardHeader>
                   <CardContent className="p-0 pt-2 text-xs font-semibold grid grid-cols-2 gap-1">
                     {question.answers.map((answer, index) => (
                       <div
@@ -321,14 +335,26 @@ const Page = () => {
                 }}
               >
                 <Label>Difficulty:</Label>
-                <div className="flex gap-2 justify-between">
+                <div className="flex gap-2 justify-between flex-wrap">
                   {difficulties.map((difficulty) => (
                     <div
                       key={difficulty}
-                      className="flex items-center space-x-2"
+                      className="flex items-center space-x-1"
                     >
                       <RadioGroupItem value={difficulty} id={difficulty} />
-                      <Label htmlFor={difficulty}>{difficulty}</Label>
+                      <Label
+                        htmlFor={difficulty}
+                        className={cn(
+                          difficulty === "EASY"
+                            ? "bg-green-600"
+                            : difficulty === "MEDIUM"
+                            ? "bg-yellow-500"
+                            : "bg-destructive",
+                          "px-2 py-1 rounded text-white cursor-pointer"
+                        )}
+                      >
+                        {difficulty}
+                      </Label>
                     </div>
                   ))}
                 </div>
