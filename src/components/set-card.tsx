@@ -8,7 +8,7 @@ interface SetCardProps {
 const SetCard = ({ set }: SetCardProps) => {
   return (
     <Link href={`/sets/${set.id}`} className="block">
-      <Card className="border-none bg-gradient-to-r from-indigo-500 to-indigo-700 text-primary-foreground shadow-xl hover:outline hover:outline-indigo-300">
+      <Card className="border-none bg-gradient-to-r from-indigo-500 to-indigo-700 text-primary-foreground  shadow-[0_6px_0_hsl(243.7_54.5_41.4)] hover:shadow-[0_3px_0_hsl(243.7_54.5_41.4)] hover:translate-y-[3px] active:shadow-[0_0px_0_hsl(243.7_54.5_41.4)] active:translate-y-[6px]">
         <CardHeader>
           <CardTitle>{set.title}</CardTitle>
           <CardDescription className="text-muted/80">
