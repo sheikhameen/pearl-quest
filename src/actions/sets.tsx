@@ -1,10 +1,10 @@
 "use server";
 
-import { newSetWithQuestionsSchema } from "@/app/(main)/sets/new/page";
-import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { ActionResponse, createActionResponse } from "./helpers";
+import prisma from "@/lib/prisma";
 import { Set } from "@prisma/client";
+import { newSetWithQuestionsSchema } from "@/lib/zodSchemas";
+import { ActionResponse, createActionResponse } from "./helpers";
 
 export const createSet = async (
   data: z.infer<typeof newSetWithQuestionsSchema>
