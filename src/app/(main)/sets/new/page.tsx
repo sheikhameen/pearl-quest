@@ -30,6 +30,8 @@ import { useState } from "react";
 import { $Enums, Prisma } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
+import { createSet } from "@/actions/sets";
+import { useRouter } from "next/navigation";
 
 type QuestionWithAnswers = Prisma.QuestionGetPayload<{
   include: {
@@ -64,7 +66,7 @@ const questionSchema = z.object({
   }),
 });
 
-const formSchema = z.object({
+const newSetShape = {
   key: z
     .string()
     .min(3, "Key must have at least 3 characters")
@@ -77,11 +79,17 @@ const formSchema = z.object({
     .string()
     .min(3, "Description must have at least 3 characters")
     .max(256, "Description must have at most 256 characters"),
+};
+export const newSetSchema = z.object(newSetShape);
+export const newSetWithQuestionsSchema = z.object({
+  ...newSetShape,
+  questions: questionSchema.array(),
 });
 
 type AnswersMCQType = "answer-1" | "answer-2" | "answer-3" | "answer-4";
 
 const Page = () => {
+  const router = useRouter();
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [newQuestionText, setNewQuestionText] = useState("");
   const [newQuestionAnswer1, setNewQuestionAnswer1] = useState("");
@@ -94,8 +102,8 @@ const Page = () => {
     useState<$Enums.Difficulty>("EASY");
   const difficulties: $Enums.Difficulty[] = ["EASY", "MEDIUM", "HARD"];
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof newSetSchema>>({
+    resolver: zodResolver(newSetSchema),
     defaultValues: {
       key: "",
       title: "",
@@ -103,11 +111,21 @@ const Page = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof newSetSchema>) => {
+    const valuesWithQuestions: z.infer<typeof newSetWithQuestionsSchema> = {
+      ...values,
+      questions,
+    };
+    const response = await createSet(valuesWithQuestions);
+
+    if (response.ok) {
+      toast.success("Successfully added set!");
+      router.push("/sets");
+      return;
+    }
+
+    toast.error(response.error.message);
+  };
 
   const resetNewQuestionForm = () => {
     setNewQuestionText("");
@@ -368,6 +386,9 @@ const Page = () => {
               >
                 <PlusCircle /> Add new question
               </Button>
+              <p className="text-xs text-muted-foreground">
+                Don&apos;t forget to click the button to add the question!
+              </p>
             </Card>
             <Button type="submit">Submit</Button>
           </form>
