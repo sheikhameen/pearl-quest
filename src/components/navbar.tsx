@@ -1,6 +1,6 @@
 "use client";
 
-import { House, ScrollText, Settings } from "lucide-react";
+import { ScrollText, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { buttonVariants } from "./ui/button";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const routes = [
-  { label: "Home", href: "/", icon: <House /> },
+  // { label: "Home", href: "/", icon: <House /> },
   { label: "Sets", href: "/sets", icon: <ScrollText /> },
   { label: "Settings", href: "/settings", icon: <Settings /> },
 ];
