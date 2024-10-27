@@ -19,8 +19,7 @@ const Page = async ({ params }: { params: Promise<{ setId: string }> }) => {
         {set.title}
       </h1>
       <p className="text-xs text-muted-foreground text-center">
-        The king, seeing how much happier his subjects were, realized the error
-        of his ways and repealed the joke tax.
+        {set.description}
       </p>
       <Link
         href={`/sets/${set.id}/play`}
