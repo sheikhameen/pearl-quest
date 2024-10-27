@@ -25,13 +25,12 @@ const Navbar = () => {
             href={route.href}
             className={cn(
               buttonVariants({
-                size: "icon",
                 variant: pathname === route.href ? "default" : "secondary",
               }),
               "rounded-full [&_svg]:size-6 p-6"
             )}
           >
-            {route.icon}
+            {route.icon} {route.label}
           </Link>
         ))}
       </div>
