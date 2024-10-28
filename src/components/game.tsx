@@ -137,7 +137,7 @@ const Game = ({ set }: GameProps) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between items-center">
-        <p className="text-xs mb-2 font-semibold">
+        <p className="text-xs font-semibold">
           <span
             className={cn(
               "text-white px-1.5 py-0.5 w-max rounded",
@@ -156,7 +156,9 @@ const Game = ({ set }: GameProps) => {
             {timeouts[currentQuestion.difficulty]} seconds
           </span>
         </p>
-        <p className="text-lg font-semibold">Total Score: {score}</p>
+        <p className="text-sm">
+          Total Score: <span className="font-bold">{score}</span>
+        </p>
       </CardFooter>
     </Card>
   );
