@@ -176,7 +176,7 @@ const Page = () => {
                   </FormDescription>
                   <FormControl>
                     <Input
-                      placeholder="You key here..."
+                      placeholder="Your key here..."
                       disabled={loading}
                       {...field}
                     />
