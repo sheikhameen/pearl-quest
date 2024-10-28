@@ -8,10 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Progress } from "./ui/progress";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import { RotateCcw } from "lucide-react";
+import Link from "next/link";
 
 type SetWithQuestionAndAnswers = Prisma.SetGetPayload<{
   include: { questions: { include: { answers: true } } };
@@ -81,12 +83,26 @@ const Game = ({ set }: GameProps) => {
 
   if (gameOver) {
     return (
-      <Card className="w-full max-w-md mx-auto">
+      <Card className="w-full max-w-md mx-auto text-center">
         <CardHeader>
           <CardTitle>Game Over!</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold">Final Score: {score}</p>
+        <CardContent className="space-y-8">
+          <p className="text-xl text-muted-foreground">
+            Final Score <br />{" "}
+            <span className="font-bold text-9xl text-zinc-900">{score}</span>
+          </p>
+          <Link
+            href={`/sets/${set.id}`}
+            className={cn(
+              buttonVariants({
+                variant: "default",
+              }),
+              "rounded-full [&_svg]:size-6 p-6"
+            )}
+          >
+            <RotateCcw /> Restart
+          </Link>
         </CardContent>
       </Card>
     );
