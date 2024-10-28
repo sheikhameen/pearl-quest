@@ -82,6 +82,9 @@ const Game = ({ set }: GameProps) => {
   }, [currentQuestionIndex, gameOver, currentQuestion, handleNextQuestion]);
 
   if (gameOver) {
+    const totalPossibleScore = set.questions.reduce((prev, curr) => {
+      return prev + points[curr.difficulty];
+    }, 0);
     return (
       <Card className="w-full max-w-md mx-auto text-center">
         <CardHeader>
@@ -91,6 +94,9 @@ const Game = ({ set }: GameProps) => {
           <p className="text-xl text-muted-foreground">
             Final Score <br />{" "}
             <span className="font-bold text-9xl text-zinc-900">{score}</span>
+            <span className="font-medium text-4xl text-muted-foreground/70 relative -top-2">
+              /{totalPossibleScore}
+            </span>
           </p>
           <Link
             href={`/sets/${set.id}`}
