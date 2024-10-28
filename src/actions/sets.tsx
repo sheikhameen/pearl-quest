@@ -10,6 +10,14 @@ export const createSet = async (
   data: z.infer<typeof newSetWithQuestionsSchema>
 ): Promise<ActionResponse<Set>> => {
   try {
+    const key = await prisma.key.findFirst({
+      where: {
+        code: data.key.toUpperCase(),
+      },
+    });
+
+    if (!key) throw new Error("Invalid key");
+
     const newSet = await prisma.set.create({
       data: {
         title: data.title,

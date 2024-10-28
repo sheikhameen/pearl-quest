@@ -20,10 +20,7 @@ export const questionSchema = z.object({
 });
 
 const newSetShape = {
-  key: z
-    .string()
-    .min(3, "Key must have at least 3 characters")
-    .max(20, "Key must have at most 20 characters"),
+  key: z.string().length(8, "Key must have exactly 8 characters"),
   title: z
     .string()
     .min(3, "Title must have at least 3 characters")

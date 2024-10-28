@@ -56,6 +56,9 @@ type AnswersMCQType = "answer-1" | "answer-2" | "answer-3" | "answer-4";
 
 const Page = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [newQuestionText, setNewQuestionText] = useState("");
   const [newQuestionAnswer1, setNewQuestionAnswer1] = useState("");
@@ -78,6 +81,10 @@ const Page = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof newSetSchema>) => {
+    const toastId = toast.loading("Creating a set...");
+    setLoading(true);
+    setFormError(null);
+
     const valuesWithQuestions: z.infer<typeof newSetWithQuestionsSchema> = {
       ...values,
       questions,
@@ -85,12 +92,14 @@ const Page = () => {
     const response = await createSet(valuesWithQuestions);
 
     if (response.ok) {
-      toast.success("Successfully added set!");
+      toast.success("Successfully added set!", { id: toastId });
       router.push("/sets");
       return;
     }
 
-    toast.error(response.error.message);
+    toast.error(response.error.message, { id: toastId });
+    setLoading(false);
+    setFormError(response.error.message);
   };
 
   const resetNewQuestionForm = () => {
@@ -166,7 +175,11 @@ const Page = () => {
                     You need a valid key to create question sets.
                   </FormDescription>
                   <FormControl>
-                    <Input placeholder="You key here..." {...field} />
+                    <Input
+                      placeholder="You key here..."
+                      disabled={loading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -179,7 +192,11 @@ const Page = () => {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Set title here..." {...field} />
+                    <Input
+                      placeholder="Set title here..."
+                      disabled={loading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -195,6 +212,7 @@ const Page = () => {
                     <Textarea
                       placeholder="Set description here..."
                       className="resize-none"
+                      disabled={loading}
                       {...field}
                     />
                   </FormControl>
@@ -252,12 +270,14 @@ const Page = () => {
               <Textarea
                 className="resize-none"
                 placeholder="Your question here..."
+                disabled={loading}
                 value={newQuestionText}
                 onChange={({ target }) => setNewQuestionText(target.value)}
               />
               <RadioGroup
                 className="gap-1"
                 value={newQuestionCorrectAnswer}
+                disabled={loading}
                 onValueChange={(value: AnswersMCQType) =>
                   setNewQuestionCorrectAnswer(value)
                 }
@@ -267,6 +287,7 @@ const Page = () => {
                   <Label htmlFor="answer-1" className="w-full">
                     <Input
                       placeholder="Answer #1"
+                      disabled={loading}
                       value={newQuestionAnswer1}
                       onChange={({ target }) =>
                         setNewQuestionAnswer1(target.value)
@@ -279,6 +300,7 @@ const Page = () => {
                   <Label htmlFor="answer-2" className="w-full">
                     <Input
                       placeholder="Answer #2"
+                      disabled={loading}
                       value={newQuestionAnswer2}
                       onChange={({ target }) =>
                         setNewQuestionAnswer2(target.value)
@@ -291,6 +313,7 @@ const Page = () => {
                   <Label htmlFor="answer-3" className="w-full">
                     <Input
                       placeholder="Answer #3"
+                      disabled={loading}
                       value={newQuestionAnswer3}
                       onChange={({ target }) =>
                         setNewQuestionAnswer3(target.value)
@@ -303,6 +326,7 @@ const Page = () => {
                   <Label htmlFor="answer-4" className="w-full">
                     <Input
                       placeholder="Answer #4"
+                      disabled={loading}
                       value={newQuestionAnswer4}
                       onChange={({ target }) =>
                         setNewQuestionAnswer4(target.value)
@@ -313,6 +337,7 @@ const Page = () => {
               </RadioGroup>
 
               <RadioGroup
+                disabled={loading}
                 value={newQuestionDifficulty}
                 onValueChange={(value: $Enums.Difficulty) => {
                   setNewQuestionDifficulty(value);
@@ -348,6 +373,7 @@ const Page = () => {
                 type="button"
                 variant="outline"
                 className="w-full"
+                disabled={loading}
                 onClick={handleAddNewQuestion}
               >
                 <PlusCircle /> Add new question
@@ -356,7 +382,14 @@ const Page = () => {
                 Don&apos;t forget to click the button to add the question!
               </p>
             </Card>
-            <Button type="submit">Submit</Button>
+            {formError && (
+              <p className="text-xs bg-red-500 text-white py-1 px-2 rounded">
+                {formError}
+              </p>
+            )}
+            <Button type="submit" disabled={loading}>
+              Submit
+            </Button>
           </form>
         </Form>
       </CardContent>
