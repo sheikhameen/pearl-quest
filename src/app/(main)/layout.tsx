@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import AppBar from "@/components/appbar";
 import Navbar from "@/components/navbar";
 
