@@ -22,27 +22,19 @@ export const createSet = async (
       data: {
         title: data.title,
         description: data.description,
-      },
-    });
-
-    data.questions.forEach(async (question) => {
-      const newQuestion = await prisma.question.create({
-        data: {
-          setId: newSet.id,
-          text: question.text,
-          difficulty: question.difficulty,
+        questions: {
+          create: data.questions.map((question) => ({
+            text: question.text,
+            difficulty: question.difficulty,
+            answers: {
+              create: question.answers.map((answer) => ({
+                text: answer.text,
+                isCorrect: answer.isCorrect,
+              })),
+            },
+          })),
         },
-      });
-
-      question.answers.forEach(async (answer) => {
-        await prisma.answer.create({
-          data: {
-            text: answer.text,
-            isCorrect: answer.isCorrect,
-            questionId: newQuestion.id,
-          },
-        });
-      });
+      },
     });
 
     return createActionResponse(newSet);
