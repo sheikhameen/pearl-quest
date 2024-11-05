@@ -38,6 +38,7 @@ const points = {
 const Game = ({ set }: GameProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [disabled, setDisabled] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [gameOver, setGameOver] = useState(false);
 
@@ -49,13 +50,17 @@ const Game = ({ set }: GameProps) => {
     }
   }, [currentQuestionIndex, set.questions.length]);
 
-  const handleAnswer = (answer: Answer) => {
+  const handleAnswer = async (answer: Answer) => {
     if (answer.isCorrect) {
       toast.success("Correct!");
       setScore((prevScore) => prevScore + points[currentQuestion.difficulty]);
     } else {
       toast.error("Wrong!");
     }
+    setTimeLeft(3);
+    setDisabled(true);
+    await new Promise((r) => setTimeout(r, 3000)); // Wait 3 seconds
+    setDisabled(false);
     handleNextQuestion();
   };
 
@@ -70,6 +75,7 @@ const Game = ({ set }: GameProps) => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 0) {
+          // When timer runs out
           clearInterval(timer);
           handleNextQuestion();
           return 0;
@@ -136,6 +142,7 @@ const Game = ({ set }: GameProps) => {
               onClick={() => handleAnswer(answer)}
               variant="outline"
               className="justify-start"
+              disabled={disabled}
             >
               {answer.text}
             </Button>
