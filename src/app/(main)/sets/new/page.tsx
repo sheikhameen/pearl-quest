@@ -25,7 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash } from "lucide-react";
 import { useState } from "react";
 import { $Enums, Prisma } from "@prisma/client";
 import { cn } from "@/lib/utils";
@@ -229,26 +229,48 @@ const Page = () => {
               )}
               {questions.map((question) => (
                 <Card key={question.id} className="py-2 px-3 shadow-none">
-                  <CardHeader className="p-0 space-y-0 flex-row items-start justify-between">
-                    <CardTitle className="text-md leading-tight">
-                      <span className="text-muted-foreground/50 mr-1.5">
-                        {parseInt(question.id) + 1}.
-                      </span>
-                      {question.text}
-                    </CardTitle>
-                    <div
-                      className={cn(
-                        "text-xs font-semibold text-white px-1 rounded",
-                        question.difficulty === "EASY"
-                          ? "bg-green-600"
-                          : question.difficulty === "MEDIUM"
-                          ? "bg-yellow-500"
-                          : "bg-destructive"
-                      )}
-                    >
-                      {question.difficulty}
+                  <CardHeader className="p-0 space-y-0 flex-row gap-2 items-start justify-between">
+                    <div className="space-y-1 overflow-auto">
+                      <div
+                        className={cn(
+                          "text-xs font-semibold text-white px-1 rounded w-max",
+                          question.difficulty === "EASY"
+                            ? "bg-green-600"
+                            : question.difficulty === "MEDIUM"
+                            ? "bg-yellow-500"
+                            : "bg-destructive"
+                        )}
+                      >
+                        {question.difficulty}
+                      </div>
+                      <CardTitle className="text-md leading-tight">
+                        <span className="text-muted-foreground/50 mr-1.5">
+                          {parseInt(question.id) + 1}.
+                        </span>
+                        {question.text}
+                      </CardTitle>
                     </div>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      type="button"
+                      className="w-8 h-8 p-2"
+                      onClick={() => {
+                        const filteredQuestions = questions.filter(
+                          (q) => q.id !== question.id
+                        );
+                        let idCounter = 0;
+                        const newQuestions = filteredQuestions.map((q) => ({
+                          ...q,
+                          id: (idCounter++).toString(),
+                        }));
+                        setQuestions(newQuestions);
+                      }}
+                    >
+                      <Trash />
+                    </Button>
                   </CardHeader>
+
                   <CardContent className="p-0 pt-2 text-xs font-semibold grid grid-cols-2 gap-1">
                     {question.answers.map((answer, index) => (
                       <div
